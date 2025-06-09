@@ -1,8 +1,11 @@
-import { Check, Trash } from "lucide-react";
-import type { Id, Task } from "../types";
 import { useState } from "react";
-import { useSortable } from "@dnd-kit/sortable";
+
+import { Check, Trash } from "lucide-react";
+
 import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from "@dnd-kit/sortable";
+
+import type { Id, Task } from "../types";
 
 interface Props {
   task: Task;

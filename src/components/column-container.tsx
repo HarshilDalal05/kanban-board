@@ -1,9 +1,12 @@
-import { Plus, Trash2 } from "lucide-react";
-import type { Column, Id, Task } from "../types";
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { useMemo, useState } from "react";
+
+import { Plus, Trash2 } from "lucide-react";
+
+import { CSS } from "@dnd-kit/utilities";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+
 import { TaskCard } from "./task-card";
+import type { Column, Id, Task } from "../types";
 
 interface Props {
   column: Column;

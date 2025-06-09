@@ -1,21 +1,24 @@
 import { useMemo, useState } from "react";
-import type { Column, Id, Task } from "../types";
-import { generateId } from "../utils";
-import { ColumnContainer } from "./column-container";
+
 import { Plus } from "lucide-react";
+import { createPortal } from "react-dom";
+
+import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import {
   DndContext,
   DragOverlay,
   PointerSensor,
-  useSensor,
-  useSensors,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core";
-import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import { createPortal } from "react-dom";
+
+import { generateId } from "../utils";
 import { TaskCard } from "./task-card";
+import type { Column, Id, Task } from "../types";
+import { ColumnContainer } from "./column-container";
 
 export const KanbanBoard = () => {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -172,63 +175,69 @@ export const KanbanBoard = () => {
   }
 
   return (
-    <div className="m-auto flex min-h-screen w-full items-center overflow-x-auto overflow-y-hidden">
-      <DndContext
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-        sensors={sensors}
-      >
-        <div className="m-auto flex gap-4">
-          <div className="flex gap-4">
-            <SortableContext items={columnsId}>
-              {columns.map((column) => (
+    <div className="min-h-screen w-full">
+      <div className="m-auto flex min-h-[5vh] p-4 w-full items-center overflow-x-auto overflow-y-hidden">
+        <img src="/kanban.png" className="h-[40px] " />
+        <div className="text-black text-2xl mb-3">Personal Kanban</div>
+      </div>
+      <div className="m-auto flex min-h-[90vh] w-full items-center overflow-x-auto overflow-y-hidden">
+        <DndContext
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
+          sensors={sensors}
+        >
+          <div className="m-auto flex gap-4">
+            <div className="flex gap-4">
+              <SortableContext items={columnsId}>
+                {columns.map((column) => (
+                  <ColumnContainer
+                    deleteTask={deleteTask}
+                    tasks={tasks.filter((task) => task.columnId === column.id)}
+                    key={column.id}
+                    column={column}
+                    deleteColumn={deleteColumn}
+                    updateColumnTitle={updateColumnTitle}
+                    createTask={createTask}
+                    updateTaskContent={updateTaskContent}
+                  />
+                ))}
+              </SortableContext>
+            </div>
+            <button
+              className="h-[60px] w-[200px] min-w-[200px] curson-pointer  rounded-lg bg-[#0D1117] border-2 border-[#161C22] p-4 ring-rose-500 hover:ring-2 flex gap-2 justify-center items-center"
+              onClick={() => createNewColumn()}
+            >
+              <Plus /> Add Columns
+            </button>
+          </div>
+          {createPortal(
+            <DragOverlay>
+              {activeColumn && (
                 <ColumnContainer
+                  updateTaskContent={updateTaskContent}
                   deleteTask={deleteTask}
-                  tasks={tasks.filter((task) => task.columnId === column.id)}
-                  key={column.id}
-                  column={column}
+                  tasks={tasks.filter(
+                    (task) => task.columnId === activeColumn.id
+                  )}
+                  column={activeColumn}
                   deleteColumn={deleteColumn}
                   updateColumnTitle={updateColumnTitle}
                   createTask={createTask}
+                />
+              )}
+              {activeTask && (
+                <TaskCard
+                  deleteTask={deleteTask}
+                  task={activeTask}
                   updateTaskContent={updateTaskContent}
                 />
-              ))}
-            </SortableContext>
-          </div>
-          <button
-            className="h-[60px] w-[200px] min-w-[200px] curson-pointer  rounded-lg bg-[#0D1117] border-2 border-[#161C22] p-4 ring-rose-500 hover:ring-2 flex gap-2 justify-center items-center"
-            onClick={() => createNewColumn()}
-          >
-            <Plus /> Add Columns
-          </button>
-        </div>
-        {createPortal(
-          <DragOverlay>
-            {activeColumn && (
-              <ColumnContainer
-                updateTaskContent={updateTaskContent}
-                deleteTask={deleteTask}
-                tasks={tasks.filter(
-                  (task) => task.columnId === activeColumn.id
-                )}
-                column={activeColumn}
-                deleteColumn={deleteColumn}
-                updateColumnTitle={updateColumnTitle}
-                createTask={createTask}
-              />
-            )}
-            {activeTask && (
-              <TaskCard
-                deleteTask={deleteTask}
-                task={activeTask}
-                updateTaskContent={updateTaskContent}
-              />
-            )}
-          </DragOverlay>,
-          document.body
-        )}
-      </DndContext>
+              )}
+            </DragOverlay>,
+            document.body
+          )}
+        </DndContext>
+      </div>
     </div>
   );
 };
