@@ -1,6 +1,8 @@
 import { Check, Trash } from "lucide-react";
 import type { Id, Task } from "../types";
 import { useState } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Props {
   task: Task;
@@ -12,14 +14,48 @@ export const TaskCard = ({ task, deleteTask, updateTaskContent }: Props) => {
   const [hover, setHover] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
 
+  const {
+    setNodeRef,
+    attributes,
+    listeners,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: task.id,
+    data: { type: "Task", task },
+    disabled: editMode,
+  });
+
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+
   const toggleEditMode = () => {
     setEditMode((prev) => !prev);
     setHover(false);
   };
 
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="bg-[#0D1117] p-2.5 h-[100px]  opacity-30 min-h-[100px] flex text-left items-center border-rose-500 cursor-grab relative"
+      />
+    );
+  }
+
   if (editMode) {
     return (
-      <div className="bg-[#0D1117] p-2.5 h-[100px] min-h-[100px] flex text-left items-center hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative">
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className="bg-[#0D1117] p-2.5 h-[100px] min-h-[100px] flex text-left items-center hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
+      >
         <textarea
           className="h-[90%] w-full resize-none border-none bg-transparent text-white focus:outline-none"
           value={task.content}
@@ -39,6 +75,10 @@ export const TaskCard = ({ task, deleteTask, updateTaskContent }: Props) => {
   }
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       className="task-container bg-[#0D1117] p-2.5 h-[100px] min-h-[100px] flex text-left items-center hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
