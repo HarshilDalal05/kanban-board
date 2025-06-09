@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { Column, Id } from "../types";
+import type { Column, Id, Task } from "../types";
 import { generateId } from "../utils";
 import { ColumnContainer } from "./column-container";
 import { Plus } from "lucide-react";
@@ -17,6 +17,7 @@ import { createPortal } from "react-dom";
 
 export const KanbanBoard = () => {
   const [columns, setColumns] = useState<Column[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
   const columnsId = useMemo(
     () => columns.map((col: Column) => col.id),
@@ -42,7 +43,6 @@ export const KanbanBoard = () => {
   }
 
   function deleteColumn(id: Id) {
-    console.log({ id, columns });
     const filterColumns = columns.filter((column) => column.id !== id);
     setColumns(filterColumns);
   }
@@ -54,6 +54,29 @@ export const KanbanBoard = () => {
     });
 
     setColumns(updatedColumns);
+  }
+
+  function updateTaskContent(id: Id, content: string) {
+    const updatedTasks = tasks.map((task) => {
+      if (task.id !== id) return task;
+      return { ...task, content };
+    });
+
+    setTasks(updatedTasks);
+  }
+
+  function createTask(columnId: Id) {
+    const newTask: Task = {
+      id: generateId(),
+      columnId,
+      content: `Task ${tasks.length + 1} `,
+    };
+    setTasks([...tasks, newTask]);
+  }
+
+  function deleteTask(id: Id) {
+    const filterTasks = tasks.filter((task) => task.id !== id);
+    setTasks(filterTasks);
   }
 
   function onDragStart(event: DragStartEvent) {
@@ -99,10 +122,14 @@ export const KanbanBoard = () => {
             <SortableContext items={columnsId}>
               {columns.map((column) => (
                 <ColumnContainer
+                  deleteTask={deleteTask}
+                  tasks={tasks.filter((task) => task.columnId === column.id)}
                   key={column.id}
                   column={column}
                   deleteColumn={deleteColumn}
                   updateColumnTitle={updateColumnTitle}
+                  createTask={createTask}
+                  updateTaskContent={updateTaskContent}
                 />
               ))}
             </SortableContext>
@@ -118,9 +145,15 @@ export const KanbanBoard = () => {
           <DragOverlay>
             {activeColumn && (
               <ColumnContainer
+                updateTaskContent={updateTaskContent}
+                deleteTask={deleteTask}
+                tasks={tasks.filter(
+                  (task) => task.columnId === activeColumn.id
+                )}
                 column={activeColumn}
                 deleteColumn={deleteColumn}
                 updateColumnTitle={updateColumnTitle}
+                createTask={createTask}
               />
             )}
           </DragOverlay>,

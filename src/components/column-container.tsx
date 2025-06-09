@@ -1,19 +1,28 @@
-import { Trash2 } from "lucide-react";
-import type { Column, Id } from "../types";
+import { Plus, Trash2 } from "lucide-react";
+import type { Column, Id, Task } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useState } from "react";
+import { TaskCard } from "./task-card";
 
 interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
   updateColumnTitle: (id: Id, title: string) => void;
+  tasks: Task[];
+  createTask: (columnId: Id) => void;
+  deleteTask: (id: Id) => void;
+  updateTaskContent: (id: Id, value: string) => void;
 }
 
 export const ColumnContainer = ({
   column,
   deleteColumn,
   updateColumnTitle,
+  tasks,
+  createTask,
+  deleteTask,
+  updateTaskContent,
 }: Props) => {
   const [editMode, setEditMode] = useState<boolean>(false);
   const {
@@ -84,8 +93,24 @@ export const ColumnContainer = ({
           <Trash2 className="stroke-gray-500 hover:stroke-white hover:bg-[#161C22]" />
         </button>
       </div>
-      <div className="flex flex-grow">Content</div>
-      <div>Footer</div>
+      <div className="flex flex-col flex-grow gap-4 p-2 overflow-x-hidden overflow-y-auto">
+        {tasks.map((task) => (
+          <TaskCard
+            deleteTask={deleteTask}
+            task={task}
+            updateTaskContent={updateTaskContent}
+          />
+        ))}
+      </div>
+      <button
+        className="flex gap-2 justify-end-safe items-center border-[#161C22] border-2 rounded-md p-4 border-x-[#161C22] hover:bg-[#0D1117] active:bg-black"
+        onClick={() => {
+          createTask(column.id);
+        }}
+      >
+        <Plus />
+        Add Task
+      </button>
     </div>
   );
 };
