@@ -45,7 +45,7 @@ export const TaskCard = ({ task, deleteTask, updateTaskContent }: Props) => {
       <div
         ref={setNodeRef}
         style={style}
-        className="bg-[#0D1117] p-2.5 h-[100px]  opacity-30 min-h-[100px] flex text-left items-center border-rose-500 cursor-grab relative"
+        className="bg-white border-1 border-black rounded shadow-lg p-2.5 h-[100px]  opacity-30 min-h-[100px] flex text-left items-center cursor-grab relative"
       />
     );
   }
@@ -57,10 +57,10 @@ export const TaskCard = ({ task, deleteTask, updateTaskContent }: Props) => {
         style={style}
         {...attributes}
         {...listeners}
-        className="bg-[#0D1117] p-2.5 h-[100px] min-h-[100px] flex text-left items-center hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
+        className="bg-white border-1 rounded shadow-lg p-2.5 h-[100px]  min-h-[100px] flex text-left items-center hover:ring-2 hover:ring-inset  cursor-grab relative"
       >
         <textarea
-          className="h-[90%] w-full resize-none border-none bg-transparent text-white focus:outline-none"
+          className="h-[90%] w-full resize-none border-none  text-black bg-transparent focus:outline-none"
           value={task.content}
           autoFocus
           placeholder="Enter task content here ....."
@@ -69,9 +69,9 @@ export const TaskCard = ({ task, deleteTask, updateTaskContent }: Props) => {
         />
         <button
           onClick={toggleEditMode}
-          className=" bg-[#161C22] p-2 rounded opacity-60 hover:opacity-100"
+          className=" bg-[#161C22] absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded opacity-60 hover:opacity-100"
         >
-          <Check />
+          <Check className="p-1"/>
         </button>
       </div>
     );
@@ -82,21 +82,21 @@ export const TaskCard = ({ task, deleteTask, updateTaskContent }: Props) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="task-container bg-[#0D1117] p-2.5 h-[100px] min-h-[100px] flex text-left items-center hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative"
+      className="task-container rounded bg-white border-1  p-2.5 h-[100px] min-h-[100px] flex text-left items-center hover:ring-2 hover:ring-inset  shadow-lg cursor-grab relative"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      onDoubleClick={toggleEditMode}
+      onClick={toggleEditMode}
     >
-      <p className="my-auto h-[90%] w-full overflow-x-hidden overflow-y-auto whitespace-pre-wrap ">
+      <p className="my-auto h-[90%] w-full text-black overflow-x-hidden overflow-y-auto whitespace-pre-wrap ">
         {task.content}
       </p>
 
       {hover && (
         <button
           onClick={() => deleteTask(task.id)}
-          className="stroke-white absolute right-4 top-1/2 -translate-y-1/2 bg-[#161C22] p-2 rounded opacity-60 hover:opacity-100"
+          className="stroke-white absolute right-4 top-1/2 -translate-y-1/2 bg-[#161C22] p-1 rounded opacity-60 hover:opacity-100"
         >
-          <Trash />
+          <Trash className="p-1"/>
         </button>
       )}
     </div>

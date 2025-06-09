@@ -176,11 +176,21 @@ export const KanbanBoard = () => {
 
   return (
     <div className="min-h-screen w-full">
-      <div className="m-auto flex min-h-[5vh] p-4 w-full items-center overflow-x-auto overflow-y-hidden">
-        <img src="/kanban.png" className="h-[40px] " />
-        <div className="text-black text-2xl mb-3">Personal Kanban</div>
+      <div className="m-auto flex shadow-lg  border-gray-400 min-h-[5vh] p-4 w-full items-center justify-between">
+        <div className="flex items-center">
+          <img src="/kanban.png" className="h-[40px] mr-2" />
+          <div className="text-black text-2xl mb-3 font-bold">KanbanBoard</div>
+        </div>
+        <div>
+          <button
+            className="h-[60px] w-[200px] min-w-[200px] curson-pointer rounded-lg bg-[#774F34] p-4 flex gap-2 justify-center items-center text-lg hover:bg-[#4a3425]"
+            onClick={() => createNewColumn()}
+          >
+            <Plus /> Add Columns
+          </button>
+        </div>
       </div>
-      <div className="m-auto flex min-h-[90vh] w-full items-center overflow-x-auto overflow-y-hidden">
+      <div className="m-auto bg-gray-100 flex min-h-[90vh] w-full items-center overflow-x-auto overflow-y-hidden">
         <DndContext
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
@@ -190,12 +200,13 @@ export const KanbanBoard = () => {
           <div className="m-auto flex gap-4">
             <div className="flex gap-4">
               <SortableContext items={columnsId}>
-                {columns.map((column) => (
+                {columns.map((column, i) => (
                   <ColumnContainer
                     deleteTask={deleteTask}
                     tasks={tasks.filter((task) => task.columnId === column.id)}
                     key={column.id}
                     column={column}
+                    columnIndex={i + 1}
                     deleteColumn={deleteColumn}
                     updateColumnTitle={updateColumnTitle}
                     createTask={createTask}
@@ -204,12 +215,6 @@ export const KanbanBoard = () => {
                 ))}
               </SortableContext>
             </div>
-            <button
-              className="h-[60px] w-[200px] min-w-[200px] curson-pointer  rounded-lg bg-[#0D1117] border-2 border-[#161C22] p-4 ring-rose-500 hover:ring-2 flex gap-2 justify-center items-center"
-              onClick={() => createNewColumn()}
-            >
-              <Plus /> Add Columns
-            </button>
           </div>
           {createPortal(
             <DragOverlay>
